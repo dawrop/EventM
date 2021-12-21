@@ -3,6 +3,7 @@ package com.example.backend.models;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.sql.Struct;
 import java.util.Set;
 
 @Entity
@@ -16,6 +17,7 @@ public class Event {
     private String title;
     private String description;
     private String category;
+    private String city;
     private String address;
     private String date;
     private String time;
@@ -26,11 +28,12 @@ public class Event {
 
     protected Event() {}
 
-    public Event(Long id, Long hostId, String title, String description, String category, String address, String date, String time, String picture) {
+    public Event(Long id, Long hostId, String title, String description, String category, String city, String address, String date, String time, String picture) {
         this.id = id;
         this.hostId = hostId;
         this.title = title;
         this.description = description;
+        this.city = city;
         this.category = category;
         this.address = address;
         this.date = date;

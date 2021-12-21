@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://ec2-54-78-211-131.eu-west-1.compute.amazonaws.com:5432/defqeq2ukuoiuc
+    username: ojepytmlfexfwe
+    password: b7a11405b0a32ce84e327bc6bb20ba966932af74c8e114f9a63819448d3d39cc
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+app:
+  auth:
+    jwtSecret: tokenSecret
+    jwtExpirationMs: 3600000
+    jwtRefreshExpirationMs: 7776000000
+
+#authentication-test:
+#  auth:
+#    tokenSecret: myTokenSecret
+#    tokenExpirationMsec: 3600000 #1 hour
+#    refreshTokenExpirationMsec: 7776000000 #90 days
+#    accessTokenCookieName: accessToken
+#    refreshTokenCookieName: refreshToken

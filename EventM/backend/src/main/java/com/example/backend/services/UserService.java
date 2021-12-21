@@ -1,12 +1,16 @@
 package com.example.backend.services;
 
 import com.example.backend.models.User;
+import com.example.backend.payload.request.PasswordChangeRequest;
+import com.example.backend.payload.response.MessageResponse;
 import com.example.backend.payload.response.UserResponse;
 import com.example.backend.repositories.UserRepository;
 import com.example.backend.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +19,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
+    @Autowired
+    private PasswordEncoder encoder;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -41,5 +48,28 @@ public class UserService {
                         .avatar(user.getAvatar())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    public ResponseEntity<?> changePassword(String email, PasswordChangeRequest passwordChangeRequest) {
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (!passwordChangeRequest.getNewPassword().equals(passwordChangeRequest.getNewRepeatPassword())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Passwords don't match!"));
+        }
+
+        if (!encoder.matches(passwordChangeRequest.getOldPassword(), user.getPassword())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Incorrect old password!"));
+        }
+
+        user.setPassword(encoder.encode(passwordChangeRequest.getNewPassword()));
+        userRepository.save(user);
+
+        return ResponseEntity.ok(new MessageResponse("Password successfully changed!"));
     }
 }

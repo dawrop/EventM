@@ -9,7 +9,7 @@
                                 <div class="card" >
                                     <div class="card-body">
                                         <hr class="my-4">
-                                        <div class="d-flex flex-column align-items-center text-center">
+                                        <div class="d-flex flex-column align-items-center text-center" v-if="!isFetching">
                                             <img
                                                     v-bind:src="require(`@/assets/avatars/${ currentUser.avatar }.png`)"
                                                     alt="Admin"
@@ -20,6 +20,12 @@
                                                 <h4>{{ currentUser.name }}</h4>
                                                 <p class="text-secondary mb-1">{{ currentUser.email }}</p>
                                             </div>
+                                            <div class="row">
+                                                <div class="col-sm-9 text-secondary pt-5">
+                                                    <input type="file" ref="fileInput" hidden>
+                                                    <input type="button" v-on:click="selectFile" class="btn btn-myPrimary px-4" value="Change Avatar">
+                                                </div>
+                                            </div>
                                         </div>
                                         <hr class="my-4">
                                     </div>
@@ -27,14 +33,15 @@
                             </div>
                             <div class="col-lg-8">
                                 <div class="card">
-                                    <div class="card-body" style="justify-content: center">
+                                    <form class="card-body" style="justify-content: center" v-on:submit="sendPasswordData">
+                                        <hr class="my-4">
                                         <h1 style="padding-bottom: 20px">Change password</h1>
                                         <div class="row mb-3" style="align-items: center">
                                             <div class="col-sm-3">
                                                 <h6 class="mb-0">Old password</h6>
                                             </div>
                                             <div class="col-sm-9 text-secondary">
-                                                <input type="password" class="form-control">
+                                                <input v-model="oldPassword" type="password" class="form-control">
                                             </div>
                                         </div>
                                         <div class="row mb-3" style="align-items: center">
@@ -42,7 +49,7 @@
                                                 <h6 class="mb-0">New password</h6>
                                             </div>
                                             <div class="col-sm-9 text-secondary">
-                                                <input type="password" class="form-control">
+                                                <input v-model="newPassword" type="password" class="form-control">
                                             </div>
                                         </div>
                                         <div class="row mb-3" style="align-items: center">
@@ -50,17 +57,18 @@
                                                 <h6 class="mb-0">Repeat new password</h6>
                                             </div>
                                             <div class="col-sm-9 text-secondary">
-                                                <input type="password" class="form-control">
+                                                <input v-model="newRepeatPassword" type="password" class="form-control">
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-sm-3"></div>
                                             <div class="col-sm-9 text-secondary">
-                                                <input type="button" class="btn btn-myPrimary px-4" value="Save Changes">
+                                                <input type="submit" class="btn btn-myPrimary px-4" value="Save Changes">
                                             </div>
                                         </div>
-                                    </div>
+                                        <hr class="my-4">
+                                    </form>
                                 </div>
 
                             </div>
@@ -77,17 +85,61 @@ import api from "@/services/api";
 import UserDetails from "@/models/userDetails";
 
 export default {
-    name: "ContentContainer",
+    name: "ProfileContainer",
     data() {
         return {
-            currentUser: new UserDetails('', '', '', '')
+            isFetching: true,
+            currentUser: new UserDetails('', '', '', ''),
+            oldPassword: '',
+            newPassword: '',
+            newRepeatPassword: ''
         }
     },
-    mounted() {
+    async mounted() {
         api.get('/users/me').then(response => {
             console.log("Response " + JSON.stringify(response.data))
             this.currentUser = response.data
+            this.isFetching = false
         })
+    },
+    methods: {
+        selectFile() {
+            let fileInputElement = this.$refs.fileInput
+            fileInputElement.click()
+
+            let user = JSON.parse(localStorage.getItem("user"));
+            let avatar = fileInputElement.files[0]
+            let reqBody = new FormData();
+            reqBody.append("file", avatar)
+            fetch("http://localhost:8080/api/files/avatars", {
+                method: "post",
+                body: reqBody,
+                credentials: "omit",
+                headers: {
+                    'Authorization': 'Bearer ' + user.accessToken
+                }
+            }).then(response => {
+                if (response.status === 200)
+                    return response
+                throw response.status
+            })
+                // .then(response => response.json())
+                // .then(reqBody => {
+                //     this.currentUser.avatar = reqBody.message
+                //     //TODO zmienić na updateAvatar
+                //     console.log(this.currentUser.avatar)
+                // })
+                // .catch(console.error)
+        },
+        sendPasswordData() {
+            api.put('/users/changePassword', {
+                oldPassword: this.oldPassword,
+                newPassword: this.newPassword,
+                newRepeatPassword: this.newRepeatPassword
+            }).then(response => {
+                console.log(response.data)
+            }).catch(console.error)
+        }
     }
 
 }

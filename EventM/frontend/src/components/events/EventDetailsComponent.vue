@@ -17,6 +17,8 @@
                         <h6>{{ eventDetails.description }}</h6>
                         <p class="text-secondary mb-1">Category</p>
                         <h6>{{ eventDetails.category }}</h6>
+                        <p class="text-secondary mb-1">City</p>
+                        <h6>{{ eventDetails.city }}</h6>
                         <p class="text-secondary mb-1">Address</p>
                         <h6>{{ eventDetails.address }}</h6>
                         <p class="text-secondary mb-1">Date</p>
@@ -45,9 +47,7 @@ export default {
     name: "EventDetailsComponent",
     data() {
         return {
-            eventDetails: [],
-
-
+            eventDetails: []
         }
     },
     mounted() {

@@ -1,6 +1,6 @@
 <template>
     <section>
-        <form v-on:submit.prevent="sendEventData">
+        <form v-on:submit.prevent="handleSubmit">
             <div class="form-group">
                 <label>Title</label>
                 <b-form-input
@@ -35,6 +35,14 @@
                 </Multiselect>
             </div>
             <div class="form-group">
+                <label>City</label>
+                <b-form-input
+                        v-model="event.city"
+                        type="text"
+                        class="form-control form-control-lg"
+                        style="border-color: #DCDCDCFF"/>
+            </div>
+            <div class="form-group">
                 <label>Address</label>
                 <b-form-input
                         v-model="event.address"
@@ -57,16 +65,16 @@
                         class="form-control form-control-lg"
                         style="border-color: #DCDCDCFF"/>
             </div>
-<!--            <div class="form-group">-->
-<!--                <label>Upload picture</label>-->
-<!--                <b-form-file-->
-<!--                        v-model="event.picture"-->
-<!--                        :state="Boolean(event.picture)"-->
-<!--                        accept=".png, .jpg"-->
-<!--                        class="form-control form-control-lg"-->
-<!--                        style="border-color: #DCDCDCFF"-->
-<!--                />-->
-<!--            </div>-->
+            <div class="form-group">
+                <label>Upload picture</label>
+                <b-form-file
+                        ref="eventPic"
+                        :state="Boolean(event.picture)"
+                        accept=".png, .jpg"
+                        class="form-control form-control-lg"
+                        style="border-color: #DCDCDCFF"
+                />
+            </div>
 
             <button
                     type="submit"
@@ -87,7 +95,7 @@ export default {
     components: { Multiselect },
     data() {
         return {
-            event: new Event('', '','','','','','', ''),
+            event: new Event('', '','','','','','', '', ''),
             options: [
                 {categoryName: 'Art'},
                 {categoryName: 'Comedy'},
@@ -106,17 +114,43 @@ export default {
         }
     },
     methods: {
-        handleSubmit: function () {
-            console.log(this.event)
+        handleSubmit() {
+            this.sendEventPic()
+        },
+        sendEventPic() {
+            let user = JSON.parse(localStorage.getItem("user"));
+            let eventPicFile = this.$refs.eventPic.files[0];
+            let reqBody = new FormData();
+            reqBody.append("file", eventPicFile)
+            fetch("http://localhost:8080/api/files/eventPics", {
+                method: "post",
+                body: reqBody,
+                credentials: "omit",
+                headers: {
+                    'Authorization': 'Bearer ' + user.accessToken
+                }
+            }).then(response => {
+                if (response.status === 200)
+                    return response
+                throw response.status
+            })
+                .then(response => response.json())
+                .then(reqBody => {
+                    this.event.picture = reqBody.message
+                    this.sendEventData()
+                })
+                .catch(console.error)
         },
         sendEventData() {
             api.post('/events/events', {
                 title: this.event.title,
                 description: this.event.description,
                 category: this.event.category.categoryName,
+                city: this.event.city,
                 address: this.event.address,
                 date: this.event.date,
                 time: this.event.time,
+                picture: this.event.picture,
                 hostId: this.currentUser.id
             }).then(response => {
                 console.log(response.data)
