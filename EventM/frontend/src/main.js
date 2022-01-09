@@ -21,6 +21,24 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import '@/assets/styles/main.css'
 import '@/assets/styles/button.css'
 
+Vue.filter('formatTime', function(value) {
+  if (value) {
+    const parts = value.split(":");
+    return +parts[0] + ":" + parts[1];
+  } else {
+    return "unknown"
+  }
+});
+
+Vue.filter('formatDate', function(value) {
+  if (value) {
+    const parts = value.split("-");
+    return parts[2] + "." + parts[1] + "." + parts[0];
+  } else {
+    return "unknown"
+  }
+});
+
 new Vue({
   router,
   store,

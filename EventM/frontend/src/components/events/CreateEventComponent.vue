@@ -63,6 +63,7 @@
                 <b-form-timepicker
                         v-model="event.time"
                         class="form-control form-control-lg"
+                        reset-button
                         style="border-color: #DCDCDCFF"/>
             </div>
             <div class="form-group">
@@ -95,7 +96,7 @@ export default {
     components: { Multiselect },
     data() {
         return {
-            event: new Event('', '','','','','','', '', ''),
+            event: new Event('', '','','','', '','', ''),
             options: [
                 {categoryName: 'Art'},
                 {categoryName: 'Comedy'},
@@ -142,7 +143,7 @@ export default {
                 .catch(console.error)
         },
         sendEventData() {
-            api.post('/events/events', {
+            api.post('/events/addEvent', {
                 title: this.event.title,
                 description: this.event.description,
                 category: this.event.category.categoryName,
@@ -151,18 +152,11 @@ export default {
                 date: this.event.date,
                 time: this.event.time,
                 picture: this.event.picture,
-                hostId: this.currentUser.id
             }).then(response => {
                 console.log(response.data)
                 this.$router.push('/')
             }).catch(console.error)
         }
-    },
-    mounted() {
-        api.get('/users/me').then(response => {
-            console.log("Response " + JSON.stringify(response.data))
-            this.currentUser = response.data
-        })
     }
 
 }

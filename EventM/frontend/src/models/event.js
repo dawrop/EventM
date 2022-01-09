@@ -1,5 +1,5 @@
 export default class Event {
-    constructor(title, description, category, city, address, date, time, picture, hostId) {
+    constructor(title, description, category, city, address, date, time, picture) {
         this.title = title
         this.description = description
         this.category = category
@@ -8,6 +8,5 @@ export default class Event {
         this.date = date
         this.time = time
         this.picture = picture
-        this.hostId = hostId
     }
 }

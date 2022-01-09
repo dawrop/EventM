@@ -15,6 +15,8 @@
                         <h6>{{ eventDetails.title }}</h6>
                         <p class="text-secondary mb-1">Description</p>
                         <h6>{{ eventDetails.description }}</h6>
+                        <p class="text-secondary mb-1">Host</p>
+                        <h6>{{ eventDetails.user.name }}</h6>
                         <p class="text-secondary mb-1">Category</p>
                         <h6>{{ eventDetails.category }}</h6>
                         <p class="text-secondary mb-1">City</p>
@@ -28,11 +30,18 @@
                     </div>
                 </div>
                 <hr class="my-2">
+                <div>
+                    <p class="text-secondary mb-1" >Participants: {{ eventParticipants.length }}</p>
+                    <b-avatar-group  size="50px" overlap="0.35">
+                        <b-avatar v-for="participant in eventParticipants" :key="participant.id" v-bind:src="require(`../../assets/avatars/${ participant.avatar }.png`)"></b-avatar>
+                    </b-avatar-group>
+                </div>
+
             </div>
 
         </div>
-        <div class="d-flex flex-row align-items-center text-center justify-content-around p-t-5" style="width: 600px; margin: 0 auto">
-            <input type="button" class="btn btn-myPrimary px-4" value="Going">
+        <div class="d-flex flex-row align-items-center text-center justify-content-around" style="width: 600px; margin: 0 auto; padding-top: 10px">
+            <input v-on:click="addToGoing" type="button" class="btn btn-myPrimary px-4" value="Going">
             <input v-on:click="exportAsPDF" type="button" class="btn btn-myPrimary px-4" value="Export as PDF">
         </div>
     </div>
@@ -47,13 +56,18 @@ export default {
     name: "EventDetailsComponent",
     data() {
         return {
-            eventDetails: []
+            eventDetails: [],
+            eventParticipants: ''
         }
     },
     mounted() {
         api.get('/events/events/' + this.$route.params.eventId).then(response => {
             this.eventDetails = response.data
             console.log("Response " + JSON.stringify(this.eventDetails))
+        })
+        api.get('/events/eventParticipants/' + this.$route.params.eventId).then(response => {
+            this.eventParticipants = response.data
+            console.log("Response " + JSON.stringify(this.eventParticipants))
         })
     },
     methods: {
@@ -65,6 +79,12 @@ export default {
                 html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             })
+        },
+        addToGoing() {
+            api.post('/events/goingEvents', {
+                id: this.eventDetails.id
+            })
+            window.location.reload()
         }
     }
 

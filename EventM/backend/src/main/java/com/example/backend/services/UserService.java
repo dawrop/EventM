@@ -1,20 +1,18 @@
 package com.example.backend.services;
 
 import com.example.backend.models.User;
+import com.example.backend.payload.request.AvatarChangeRequest;
 import com.example.backend.payload.request.PasswordChangeRequest;
 import com.example.backend.payload.response.MessageResponse;
 import com.example.backend.payload.response.UserResponse;
 import com.example.backend.repositories.UserRepository;
-import com.example.backend.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,7 +53,7 @@ public class UserService {
                 .findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        if (!passwordChangeRequest.getNewPassword().equals(passwordChangeRequest.getNewRepeatPassword())) {
+        if (!passwordChangeRequest.getNewPassword().equals(passwordChangeRequest.getRepeatNewPassword())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Passwords don't match!"));
@@ -71,5 +69,16 @@ public class UserService {
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("Password successfully changed!"));
+    }
+
+    public ResponseEntity<?> changeAvatar(String email, AvatarChangeRequest avatarChangeRequest) {
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        user.setAvatar(avatarChangeRequest.getAvatarUuid());
+        userRepository.save(user);
+
+        return ResponseEntity.ok(new MessageResponse("Avatar successfully changed!"));
     }
 }

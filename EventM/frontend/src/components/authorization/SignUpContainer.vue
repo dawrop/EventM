@@ -7,8 +7,7 @@
             <input
                     v-model="user.name"
                     type="text"
-                    class="form-control form-control-lg"
-                    placeholder="Name Surname"/>
+                    class="form-control form-control-lg"/>
         </div>
 
         <div class="form-group">
@@ -16,8 +15,7 @@
             <input
                     v-model="user.email"
                     type="email"
-                    class="form-control form-control-lg"
-                    placeholder="email@e.com"/>
+                    class="form-control form-control-lg"/>
         </div>
 
         <div class="form-group">
@@ -25,8 +23,7 @@
             <input
                     v-model="user.password"
                     type="password"
-                    class="form-control form-control-lg"
-                    placeholder="Password"/>
+                    class="form-control form-control-lg"/>
         </div>
 
         <div class="form-group">
@@ -34,8 +31,7 @@
             <input
                     v-model="user.repeatPassword"
                     type="password"
-                    class="form-control form-control-lg"
-                    placeholder="Password"/>
+                    class="form-control form-control-lg"/>
         </div>
 
         <button

@@ -22,7 +22,7 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-sm-9 text-secondary pt-5">
-                                                    <input type="file" ref="fileInput" hidden>
+                                                    <input type="file" v-on:input="handleFile" ref="fileInput" hidden>
                                                     <input type="button" v-on:click="selectFile" class="btn btn-myPrimary px-4" value="Change Avatar">
                                                 </div>
                                             </div>
@@ -41,7 +41,7 @@
                                                 <h6 class="mb-0">Old password</h6>
                                             </div>
                                             <div class="col-sm-9 text-secondary">
-                                                <input v-model="oldPassword" type="password" class="form-control">
+                                                <input v-model="changePassword.oldPassword" type="password" class="form-control">
                                             </div>
                                         </div>
                                         <div class="row mb-3" style="align-items: center">
@@ -49,7 +49,7 @@
                                                 <h6 class="mb-0">New password</h6>
                                             </div>
                                             <div class="col-sm-9 text-secondary">
-                                                <input v-model="newPassword" type="password" class="form-control">
+                                                <input v-model="changePassword.newPassword" type="password" class="form-control">
                                             </div>
                                         </div>
                                         <div class="row mb-3" style="align-items: center">
@@ -57,7 +57,7 @@
                                                 <h6 class="mb-0">Repeat new password</h6>
                                             </div>
                                             <div class="col-sm-9 text-secondary">
-                                                <input v-model="newRepeatPassword" type="password" class="form-control">
+                                                <input v-model="changePassword.repeatNewPassword" type="password" class="form-control">
                                             </div>
                                         </div>
 
@@ -83,6 +83,7 @@
 <script>
 import api from "@/services/api";
 import UserDetails from "@/models/userDetails";
+import ChangePassword from "@/models/changePassword";
 
 export default {
     name: "ProfileContainer",
@@ -90,9 +91,7 @@ export default {
         return {
             isFetching: true,
             currentUser: new UserDetails('', '', '', ''),
-            oldPassword: '',
-            newPassword: '',
-            newRepeatPassword: ''
+            changePassword: new ChangePassword('','','')
         }
     },
     async mounted() {
@@ -106,9 +105,10 @@ export default {
         selectFile() {
             let fileInputElement = this.$refs.fileInput
             fileInputElement.click()
-
+        },
+        handleFile() {
             let user = JSON.parse(localStorage.getItem("user"));
-            let avatar = fileInputElement.files[0]
+            let avatar = this.$refs.fileInput.files[0]
             let reqBody = new FormData();
             reqBody.append("file", avatar)
             fetch("http://localhost:8080/api/files/avatars", {
@@ -123,19 +123,25 @@ export default {
                     return response
                 throw response.status
             })
-                // .then(response => response.json())
-                // .then(reqBody => {
-                //     this.currentUser.avatar = reqBody.message
-                //     //TODO zmienić na updateAvatar
-                //     console.log(this.currentUser.avatar)
-                // })
-                // .catch(console.error)
+                    .then(response => response.json())
+                    .then(reqBody => {
+                        this.currentUser.avatar = reqBody.message
+                        this.updateAvatar()
+                    })
+                    .catch(console.error)
+        },
+        updateAvatar() {
+            api.put('/users/changeAvatar', {
+                avatarUuid: this.currentUser.avatar
+            }).then(response => {
+                console.log(response.data)
+            }).catch(console.error)
         },
         sendPasswordData() {
             api.put('/users/changePassword', {
-                oldPassword: this.oldPassword,
-                newPassword: this.newPassword,
-                newRepeatPassword: this.newRepeatPassword
+                oldPassword: this.changePassword.oldPassword,
+                newPassword: this.changePassword.newPassword,
+                newRepeatPassword: this.changePassword.repeatNewPassword
             }).then(response => {
                 console.log(response.data)
             }).catch(console.error)

@@ -1,12 +1,9 @@
 package com.example.backend.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.*;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,7 +14,10 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "email")
         }
 )
-@Data
+@Setter
+@Getter
+@AllArgsConstructor
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,10 +35,14 @@ public class User {
 
 
     @ManyToMany
-    @JoinTable( name = "user_going_event",
+    @JoinTable( name = "user_going_events",
             joinColumns = @JoinColumn(name = "id_user"),
             inverseJoinColumns = @JoinColumn(name = "id_event"))
-    private Set<Event> goingEvents = new HashSet<>();
+    private Set<Event> userGoingEvents = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private Set<Event> hostingEvents;
 
     protected User() {}
 

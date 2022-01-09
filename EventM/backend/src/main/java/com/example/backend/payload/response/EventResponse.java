@@ -13,8 +13,9 @@ public class EventResponse {
     private String date;
     private String time;
     private String picture;
+    private String hostName;
 
-    public EventResponse(Long id, Long hostId, String title, String description, String category, String address, String date, String time, String picture) {
+    public EventResponse(Long id, Long hostId, String title, String description, String category, String address, String date, String time, String picture, String hostName) {
         this.id = id;
         this.hostId = hostId;
         this.title = title;
@@ -24,5 +25,6 @@ public class EventResponse {
         this.date = date;
         this.time = time;
         this.picture = picture;
+        this.hostName = hostName;
     }
 }

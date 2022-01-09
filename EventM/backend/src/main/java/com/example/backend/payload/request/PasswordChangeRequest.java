@@ -13,5 +13,5 @@ public class PasswordChangeRequest {
     private String newPassword;
 
     @NotBlank
-    private String newRepeatPassword;
+    private String repeatNewPassword;
 }

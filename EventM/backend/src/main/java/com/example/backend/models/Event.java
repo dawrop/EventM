@@ -1,36 +1,48 @@
 package com.example.backend.models;
 
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Struct;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
 @Table(name = "events")
-@Data
+@Setter
+@Getter
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long hostId;
     private String title;
     private String description;
     private String category;
     private String city;
     private String address;
-    private String date;
-    private String time;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
+    private Date date;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+    @Temporal(TemporalType.TIME)
+    private Date time;
     private String picture;
 
-    @ManyToMany(mappedBy = "goingEvents")
-    private Set<User> goingEvents;
+    @ManyToMany(mappedBy = "userGoingEvents")
+    @JsonIgnore
+    private Set<User> userGoingEvents;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     protected Event() {}
 
-    public Event(Long id, Long hostId, String title, String description, String category, String city, String address, String date, String time, String picture) {
+    public Event(Long id, String title, String description, String category, String city, String address, Date date, Date time, String picture) {
         this.id = id;
-        this.hostId = hostId;
         this.title = title;
         this.description = description;
         this.city = city;

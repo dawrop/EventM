@@ -14,7 +14,7 @@ spring:
 app:
   auth:
     jwtSecret: tokenSecret
-    jwtExpirationMs: 3600000
+    jwtExpirationMs: 1200000
     jwtRefreshExpirationMs: 7776000000
 
 #authentication-test:
