@@ -10,7 +10,6 @@
 </template>
 
 <script>
-import api from "@/services/api";
 
 export default {
     name: "UsersContainer",
@@ -19,12 +18,7 @@ export default {
             users: [],
         }
     },
-    mounted() {
-        api.get('/users/users').then(response => {
-            this.users = response.data
-            console.log("Response " + JSON.stringify(this.users))
-        })
-    }
+
 }
 </script>
 

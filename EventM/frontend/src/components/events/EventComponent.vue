@@ -1,6 +1,6 @@
 <template>
         <b-card-group deck>
-            <div v-for="event in filteredEvents" :key="event.id" style="padding-top: 15px; padding-bottom: 15px; max-width: 25rem; display: inline-block">
+            <div v-for="event in events" :key="event.id" style="padding-top: 15px; padding-bottom: 15px; max-width: 30rem; display: inline-block">
                 <router-link :to="{ name: 'event', params: { eventId: event.id }}">
                     <b-card
                             :title="event.title"
@@ -22,19 +22,15 @@
 
 <script>
 
-import searchMixin from "@/mixins/searchMixin";
-
 export default {
     name: "EventComponent",
-    props: ['events', 'search'],
+    props: ['events'],
     methods: {
         getImgURL(imgFile) {
-            let images = require.context("../../assets/eventPhotos", false, /\.png$/)
+            let images = require.context("@/assets/eventPhotos", false, /\.png$/);
             return images("./" + imgFile + ".png")
-        },
-
-    },
-    mixins: [searchMixin]
+        }
+    }
 }
 </script>
 

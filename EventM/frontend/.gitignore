@@ -22,5 +22,5 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-/src/assets/avatars
-/src/assets/eventPhotos
+/src/assets/eventPhotos/
+/src/assets/avatars/

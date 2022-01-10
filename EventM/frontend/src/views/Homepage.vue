@@ -6,13 +6,22 @@
                 <Sidebar/>
                 <div class="content-container">
                     <div class="container-fluid">
-                        <div class="jumbotron">
-                            <h1>Discover Events</h1>
-                            <div class="input-group md-form form-sm form-2 pl-0">
-                                <input class="form-control my-0 py-1 lime-border" type="text" v-model="search" placeholder="Search" aria-label="Search">
-                            </div>
-                            <EventComponent v-bind:events="events" v-bind:search="search"/>
-                        </div>
+                        <b-jumbotron>
+                            <header>
+                                <h1>Discover Events</h1>
+                                <div>
+                                    <button class="btn btn-outline-myPrimary mr-4">Most popular</button>
+                                    <button class="btn btn-outline-myPrimary mr-4">Local</button>
+                                    <button class="btn btn-outline-myPrimary mr-4">This week</button>
+
+                                    <div class="w-25 float-right">
+                                        <input class="form-control my-0 py-1 lime-border" type="text" v-model="search" placeholder="Search" aria-label="Search">
+                                    </div>
+                                </div>
+
+                            </header>
+                            <EventComponentHp v-bind:events="events" v-bind:search="search"/>
+                        </b-jumbotron>
                     </div>
                 </div>
             </div>
@@ -23,11 +32,11 @@
 <script>
 import Header from "@/components/navigation/Header"
 import Sidebar from "@/components/navigation/Sidebar"
-import EventComponent from "@/components/events/EventComponent";
+import EventComponentHp from "@/components/events/EventComponentHp";
 import api from "@/services/api";
 
 export default {
-    components: {Sidebar, Header, EventComponent},
+    components: {Sidebar, Header, EventComponentHp},
     data() {
         return {
             events: [],

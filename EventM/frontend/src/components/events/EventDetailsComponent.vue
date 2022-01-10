@@ -32,9 +32,15 @@
                 <hr class="my-2">
                 <div>
                     <p class="text-secondary mb-1" >Participants: {{ eventParticipants.length }}</p>
-                    <b-avatar-group  size="50px" overlap="0.35">
-                        <b-avatar v-for="participant in eventParticipants" :key="participant.id" v-bind:src="require(`../../assets/avatars/${ participant.avatar }.png`)"></b-avatar>
-                    </b-avatar-group>
+
+                    <div v-on:click="showParticipants">
+                        <b-avatar-group  size="50px" overlap="0.35">
+                            <b-avatar v-for="participant in eventParticipants" :key="participant.id" v-bind:src="require(`../../assets/avatars/${ participant.avatar }.png`)"></b-avatar>
+                        </b-avatar-group>
+                    </div>
+
+
+
                 </div>
 
             </div>
@@ -60,7 +66,7 @@ export default {
             eventParticipants: ''
         }
     },
-    mounted() {
+    created() {
         api.get('/events/events/' + this.$route.params.eventId).then(response => {
             this.eventDetails = response.data
             console.log("Response " + JSON.stringify(this.eventDetails))
@@ -85,6 +91,9 @@ export default {
                 id: this.eventDetails.id
             })
             window.location.reload()
+        },
+        showParticipants() {
+            this.$router.push({name: "participants", params: { participants: this.eventParticipants }})
         }
     }
 

@@ -7,7 +7,7 @@
                 <div class="content-container">
                     <div class="container-fluid">
                         <div class="jumbotron">
-                            <h1>Events</h1>
+                            <h1>Going events</h1>
                             <EventComponent v-bind:events="events"/>
                         </div>
 

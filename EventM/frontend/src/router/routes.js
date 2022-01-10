@@ -10,6 +10,7 @@ import Hosting from "@/views/events/Hosting"
 import Past from "@/views/events/Past"
 import EventDetailsComponent from "@/components/events/EventDetailsComponent";
 import Event from "@/views/events/Event";
+import ParticipantsContainer from "@/components/users/ParticipantsContainer";
 
 
 const routes = [
@@ -47,12 +48,18 @@ const routes = [
     {
         path: '/event/:eventId',
         component: Event,
+        props: true,
         children: [
             {
                 path: '',
                 name: 'event',
                 component: EventDetailsComponent
             },
+            {
+                path: '/participants',
+                name: 'participants',
+                component: ParticipantsContainer
+            }
         ]
     },
     {
